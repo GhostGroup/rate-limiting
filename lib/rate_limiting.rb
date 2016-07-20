@@ -111,6 +111,10 @@ class RateLimiting
 
   def apply_rule(request, rule)
     key = rule.get_key(request)
+    ban_expire_key = key + 'ban_expires'
+    if cache_get(ban_expire_key).present? && cache_get(ban_expire_key) > Time.now.to_i
+      return false
+    end
     if cache_has?(key)
       record = cache_get(key)
       logger.debug "[#{self}] #{request.ip}:#{request.path}: Rate limiting entry: '#{key}' => #{record}"
@@ -123,6 +127,9 @@ class RateLimiting
           response = get_header(times + 1, reset, rule.limit)
         else
           logger.debug "[#{self}] #{request.ip}:#{request.path}: Rate limited; request rejected."
+          if !cache_has?(ban_expire_key)
+            cache_set(ban_expire_key, Time.now.to_i + rule.ban_length)
+          end
           return false
         end
       else

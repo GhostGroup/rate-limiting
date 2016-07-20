@@ -12,6 +12,7 @@ class Rule
       :whitelist => []
     }
     @options = default_options.merge(options)
+    @options[:ban_length] ||= @options[:type] == :frequency ? get_frequency : get_fixed
 
   end
 
@@ -29,6 +30,10 @@ class Rule
 
   def get_expiration
     (Time.now + ( @options[:type] == :frequency ? get_frequency : get_fixed ))
+  end
+
+  def ban_length
+    @options[:ban_length]
   end
 
   def get_frequency
