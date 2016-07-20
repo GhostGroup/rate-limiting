@@ -95,6 +95,17 @@ Example:
 
 This example will let 1 request per hour for each url caught. ('/resource/url1', '/resource/url2', etc...)
 
+### whitelist
+
+Array
+
+Any IP address in the whitelist array will be exempt from the rule it is defined in.
+
+Example:
+
+
+    r.define_rule(:match => '/resource/.*', :metric => :rph, :type => :fixed, :limit => 1, :whitelist => ['127.0.0.1'])
+
 Limit Entry Storage
 ----------------
 By default, the record store used to keep track of request matches is a hash stored as a class instance variable in app instance memory. For a distributed or concurrent application, this will not yeild desired results and should be changed to a different store.

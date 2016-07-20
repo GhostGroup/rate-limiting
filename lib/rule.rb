@@ -8,10 +8,15 @@ class Rule
       :limit => 100,
       :per_ip => true,
       :per_url => false,
-      :token => false
+      :token => false,
+      :whitelist => []
     }
     @options = default_options.merge(options)
 
+  end
+
+  def whitelist
+    @options[:whitelist]
   end
 
   def match
