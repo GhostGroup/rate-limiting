@@ -111,8 +111,8 @@ class RateLimiting
 
   def apply_rule(request, rule)
     key = rule.get_key(request)
-    ban_expire_key = key + 'ban_expires'
-    if cache_get(ban_expire_key).present? && cache_get(ban_expire_key).to_i > Time.now.to_i
+    ban_expire_key = key + 'banned_at'
+    if cache_get(ban_expire_key).present? && (cache_get(ban_expire_key).to_i + rule.ban_length) > Time.now.to_i
       return false
     end
     if cache_has?(key)
@@ -128,7 +128,7 @@ class RateLimiting
         else
           logger.debug "[#{self}] #{request.ip}:#{request.path}: Rate limited; request rejected."
           if !cache_has?(ban_expire_key)
-            cache_set(ban_expire_key, Time.now.to_i + rule.ban_length)
+            cache_set(ban_expire_key, Time.now.to_i)
           end
           return false
         end
