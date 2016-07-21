@@ -112,7 +112,7 @@ class RateLimiting
   def apply_rule(request, rule)
     key = rule.get_key(request)
     ban_expire_key = key + 'ban_expires'
-    if cache_get(ban_expire_key).present? && cache_get(ban_expire_key) > Time.now.to_i
+    if cache_get(ban_expire_key).present? && cache_get(ban_expire_key).to_i > Time.now.to_i
       return false
     end
     if cache_has?(key)
