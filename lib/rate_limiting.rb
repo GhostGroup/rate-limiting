@@ -127,6 +127,7 @@ class RateLimiting
           response = get_header(times + 1, reset, rule.limit)
         else
           logger.debug "[#{self}] #{request.ip}:#{request.path}: Rate limited; request rejected."
+          BlacklistIncident.record_ban(message: 'Rate limited; request rejected.', ip_address: request.ip.to_s, path: request.path.to_s, occurred_at: Time.now)
           if !cache_has?(ban_expire_key)
             cache_set(ban_expire_key, Time.now.to_i)
           end
