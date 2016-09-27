@@ -9,11 +9,16 @@ class Rule
       :per_ip => true,
       :per_url => false,
       :token => false,
-      :whitelist => []
+      :whitelist => [],
+      :callback => nil
     }
     @options = default_options.merge(options)
     @options[:ban_length] ||= @options[:type] == :frequency ? get_frequency : get_fixed
 
+  end
+
+  def callback
+    @options[:callback]
   end
 
   def whitelist
